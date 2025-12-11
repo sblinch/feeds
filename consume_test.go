@@ -180,6 +180,122 @@ var testRssFeedXML = RssFeedXml{
 	},
 }
 
+var testOpmlFeedXML = OpmlFeed{
+	XMLName: xml.Name{Space: "", Local: "opml"},
+	Version: "2.0",
+	Head: &OpmlHead{
+		XMLName:         xml.Name{Space: "", Local: "head"},
+		Title:           "Lorem ipsum feed for an interval of 1 minutes",
+		DateCreated:     "30 Oct 18 23:22 GMT",
+		DateModified:    "30 Oct 18 23:22 GMT",
+		OwnerName:       "",
+		OwnerEmail:      "",
+		OwnerId:         "",
+		Docs:            "",
+		ExpansionState:  "",
+		VertScrollState: 0,
+		WindowTop:       0,
+		WindowLeft:      0,
+		WindowBottom:    0,
+		WindowRight:     0,
+	},
+	Body: &OpmlBody{
+		XMLName: xml.Name{Space: "", Local: "body"},
+		Outlines: []*OpmlOutline{
+			&OpmlOutline{
+				XMLName: xml.Name{Space: "", Local: "outline"},
+				Text:    "Lorem ipsum 2018-10-30T23:22:00+00:00",
+				Type:    "link",
+				Created: "30 Oct 18 23:22 GMT",
+				OpmlInclusion: OpmlInclusion{
+					Url: "http://example.com/test/1540941720",
+				},
+			},
+			&OpmlOutline{
+				XMLName: xml.Name{Space: "", Local: "outline"},
+				Text:    "Lorem ipsum 2018-10-30T23:21:00+00:00",
+				Type:    "link",
+				Created: "30 Oct 18 23:21 GMT",
+				OpmlInclusion: OpmlInclusion{
+					Url: "http://example.com/test/1540941660",
+				},
+			},
+			&OpmlOutline{
+				XMLName: xml.Name{Space: "", Local: "outline"},
+				Text:    "Lorem ipsum 2018-10-30T23:20:00+00:00",
+				Type:    "link",
+				Created: "30 Oct 18 23:20 GMT",
+				OpmlInclusion: OpmlInclusion{
+					Url: "http://example.com/test/1540941600",
+				},
+			},
+			&OpmlOutline{
+				XMLName: xml.Name{Space: "", Local: "outline"},
+				Text:    "Lorem ipsum 2018-10-30T23:19:00+00:00",
+				Type:    "link",
+				Created: "30 Oct 18 23:19 GMT",
+				OpmlInclusion: OpmlInclusion{
+					Url: "http://example.com/test/1540941540",
+				},
+			},
+			&OpmlOutline{
+				XMLName: xml.Name{Space: "", Local: "outline"},
+				Text:    "Lorem ipsum 2018-10-30T23:18:00+00:00",
+				Type:    "link",
+				Created: "30 Oct 18 23:18 GMT",
+				OpmlInclusion: OpmlInclusion{
+					Url: "http://example.com/test/1540941480",
+				},
+			},
+			&OpmlOutline{
+				XMLName: xml.Name{Space: "", Local: "outline"},
+				Text:    "Lorem ipsum 2018-10-30T23:17:00+00:00",
+				Type:    "link",
+				Created: "30 Oct 18 23:17 GMT",
+				OpmlInclusion: OpmlInclusion{
+					Url: "http://example.com/test/1540941420",
+				},
+			},
+			&OpmlOutline{
+				XMLName: xml.Name{Space: "", Local: "outline"},
+				Text:    "Lorem ipsum 2018-10-30T23:16:00+00:00",
+				Type:    "link",
+				Created: "30 Oct 18 23:16 GMT",
+				OpmlInclusion: OpmlInclusion{
+					Url: "http://example.com/test/1540941360",
+				},
+			},
+			&OpmlOutline{
+				XMLName: xml.Name{Space: "", Local: "outline"},
+				Text:    "Lorem ipsum 2018-10-30T23:15:00+00:00",
+				Type:    "link",
+				Created: "30 Oct 18 23:15 GMT",
+				OpmlInclusion: OpmlInclusion{
+					Url: "http://example.com/test/1540941300",
+				},
+			},
+			&OpmlOutline{
+				XMLName: xml.Name{Space: "", Local: "outline"},
+				Text:    "Lorem ipsum 2018-10-30T23:14:00+00:00",
+				Type:    "link",
+				Created: "30 Oct 18 23:14 GMT",
+				OpmlInclusion: OpmlInclusion{
+					Url: "http://example.com/test/1540941240",
+				},
+			},
+			&OpmlOutline{
+				XMLName: xml.Name{Space: "", Local: "outline"},
+				Text:    "Lorem ipsum 2018-10-30T23:13:00+00:00",
+				Type:    "link",
+				Created: "30 Oct 18 23:13 GMT",
+				OpmlInclusion: OpmlInclusion{
+					Url: "http://example.com/test/1540941180",
+				},
+			},
+		},
+	},
+}
+
 var testAtomFeedXML = AtomFeed{
 	XMLName:  xml.Name{Space: "", Local: "feed"},
 	Xmlns:    "",
@@ -402,4 +518,23 @@ func TestAtomUnmarshal(t *testing.T) {
 		t.Log(pretty.Println(diffs))
 		t.Error("object was not unmarshalled correctly")
 	}
+}
+
+func TestOpmlUnmarshal(t *testing.T) {
+	var xmlFeed OpmlFeed
+	xmlFile, err := os.Open("test.opml")
+	if err != nil {
+		panic("AHH file bad")
+	}
+	bytes, _ := io.ReadAll(xmlFile)
+	if err := xml.Unmarshal(bytes, &xmlFeed); err != nil {
+		panic(err)
+	}
+
+	if !reflect.DeepEqual(testOpmlFeedXML, xmlFeed) {
+		diffs := pretty.Diff(testOpmlFeedXML, xmlFeed)
+		t.Log(pretty.Println(diffs))
+		t.Error("object was not unmarshalled correctly")
+	}
+
 }

@@ -5,9 +5,9 @@ Installing
 
 	go get github.com/gorilla/feeds
 
-Feeds provides a simple, generic Feed interface with a generic Item object as well as RSS, Atom and JSON Feed specific RssFeed, AtomFeed and JSONFeed objects which allow access to all of each spec's defined elements.
+Feeds provides a simple, generic Feed interface with a generic Item object as well as RSS, Atom, OPML and JSON Feed specific RssFeed, AtomFeed, OpmlFeed and JSONFeed objects which allow access to all of each spec's defined elements.
 
-Examples
+# Examples
 
 Create a Feed and some Items in that feed using the generic interfaces:
 
@@ -49,16 +49,18 @@ Create a Feed and some Items in that feed using the generic interfaces:
 		},
 	}
 
-From here, you can output Atom, RSS, or JSON Feed versions of this feed easily
+From here, you can output Atom, RSS, OPML, or JSON Feed versions of this feed easily
 
 	atom, err := feed.ToAtom()
 	rss, err := feed.ToRss()
+	opml, err := feed.ToOpml()
 	json, err := feed.ToJSON()
 
 You can also get access to the underlying objects that feeds uses to export its XML
 
 	atomFeed := (&Atom{Feed: feed}).AtomFeed()
 	rssFeed := (&Rss{Feed: feed}).RssFeed()
+	opmlFeed := (&Opml{Feed: feed}).OpmlFeed()
 	jsonFeed := (&JSON{Feed: feed}).JSONFeed()
 
 From here, you can modify or add each syndication's specific fields before outputting
@@ -67,6 +69,8 @@ From here, you can modify or add each syndication's specific fields before outpu
 	atom, err := ToXML(atomFeed)
 	rssFeed.Generator = "gorilla/feeds v1.0 (github.com/gorilla/feeds)"
 	rss, err := ToXML(rssFeed)
+	opmlFeed.Head.OwnerId = "abcd1234"
+	atom, err := ToXML(atomFeed)
 	jsonFeed.NextUrl = "https://www.example.com/feed.json?page=2"
 	json, err := jsonFeed.ToJSON()
 */

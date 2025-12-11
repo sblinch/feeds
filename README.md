@@ -12,11 +12,12 @@ applications.
 ### Goals
 
  * Provide a simple interface to create both Atom & RSS 2.0 feeds
- * Full support for [Atom][atom], [RSS 2.0][rss], and [JSON Feed Version 1][jsonfeed] spec elements
+ * Full support for [Atom][atom], [RSS 2.0][rss], [OPML][opml], and [JSON Feed Version 1][jsonfeed] spec elements
  * Ability to modify particulars for each spec
 
 [atom]: https://tools.ietf.org/html/rfc4287
 [rss]: http://www.rssboard.org/rss-specification
+[opml]: https://opml.org/spec2.opml
 [jsonfeed]: https://jsonfeed.org/version/1.1
 
 ### Usage
@@ -73,12 +74,17 @@ func main() {
         log.Fatal(err)
     }
 
+    opml, err := feed.ToOpml()
+    if err != nil {
+        log.Fatal(err)
+    }
+
     json, err := feed.ToJSON()
     if err != nil {
         log.Fatal(err)
     }
 
-    fmt.Println(atom, "\n", rss, "\n", json)
+    fmt.Println(atom, "\n", rss, "\n", opml, "\n", json)
 }
 ```
 
@@ -149,6 +155,22 @@ Outputs:
     </item>
   </channel>
 </rss>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>jmoiron.net blog</title>
+    <dateCreated>16 Jan 13 03:22 EST</dateCreated>
+    <ownerName>Jason Moiron</ownerName>
+    <ownerEmail>jmoiron@jmoiron.net</ownerEmail>
+    <ownerId>jmoiron@jmoiron.net</ownerId>
+  </head>
+  <body>
+    <outline text="Limiting Concurrency in Go" type="link" created="18 Jan 13 21:52 EST" url="http://jmoiron.net/blog/limiting-concurrency-in-go/"></outline>
+    <outline text="Logic-less Template Redux" type="link" created="17 Jan 13 21:52 EST" url="http://jmoiron.net/blog/logicless-template-redux/"></outline>
+    <outline text="Idiomatic Code Reuse in Go" type="link" created="17 Jan 13 09:52 EST" url="http://jmoiron.net/blog/idiomatic-code-reuse-in-go/"></outline>
+  </body>
+</opml>
 
 {
   "version": "https://jsonfeed.org/version/1.1",

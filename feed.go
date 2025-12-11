@@ -121,6 +121,17 @@ func (f *Feed) WriteRss(w io.Writer) error {
 	return WriteXML(&Rss{f}, w)
 }
 
+// creates an Opml representation of this feed
+func (f *Feed) ToOpml() (string, error) {
+	r := &Opml{f}
+	return ToXML(r)
+}
+
+// WriteOpml writes an Opml representation of this feed to the writer.
+func (f *Feed) WriteOpml(w io.Writer) error {
+	return WriteXML(&Opml{f}, w)
+}
+
 // ToJSON creates a JSON Feed representation of this feed
 func (f *Feed) ToJSON() (string, error) {
 	j := &JSON{f}

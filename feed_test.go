@@ -120,6 +120,24 @@ var rssOutput = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:
   </channel>
 </rss>`
 
+var opmlOutput = `<?xml version="1.0" encoding="UTF-8"?><opml version="2.0">
+  <head>
+    <title>jmoiron.net blog</title>
+    <dateCreated>16 Jan 13 21:52 EST</dateCreated>
+    <ownerName>Jason Moiron</ownerName>
+    <ownerEmail>jmoiron@jmoiron.net</ownerEmail>
+    <ownerId>jmoiron@jmoiron.net</ownerId>
+  </head>
+  <body>
+    <outline text="Limiting Concurrency in Go" type="link" created="16 Jan 13 21:52 EST" url="http://jmoiron.net/blog/limiting-concurrency-in-go/"></outline>
+    <outline text="Logic-less Template Redux" type="link" created="16 Jan 13 21:52 EST" url="http://jmoiron.net/blog/logicless-template-redux/"></outline>
+    <outline text="Idiomatic Code Reuse in Go" type="link" created="16 Jan 13 21:52 EST" url="http://jmoiron.net/blog/idiomatic-code-reuse-in-go/"></outline>
+    <outline text="Never Gonna Give You Up Mp3" type="link" created="16 Jan 13 21:52 EST" url="http://example.com/RickRoll.mp3"></outline>
+    <outline text="String formatting in Go" type="link" created="16 Jan 13 21:52 EST" url="http://example.com/strings"></outline>
+    <outline text="Go Proverb #1" type="link" created="16 Jan 13 21:52 EST" url="https://go-proverbs.github.io/"></outline>
+  </body>
+</opml>`
+
 var jsonOutput = `{
   "version": "https://jsonfeed.org/version/1.1",
   "title": "jmoiron.net blog",
@@ -278,6 +296,21 @@ func TestFeed(t *testing.T) {
 		t.Errorf("Rss not what was expected.  Got:\n%s\n\nExpected:\n%s\n", got, rssOutput)
 	}
 
+	opml, err := feed.ToOpml()
+	if err != nil {
+		t.Errorf("unexpected error encoding OPML: %v", err)
+	}
+	if opml != opmlOutput {
+		t.Errorf("Opml not what was expected.  Got:\n%s\n\nExpected:\n%s\n", opml, opmlOutput)
+	}
+	buf.Reset()
+	if err := feed.WriteOpml(&buf); err != nil {
+		t.Errorf("unexpected error writing OPML: %v", err)
+	}
+	if got := buf.String(); got != opmlOutput {
+		t.Errorf("Opml not what was expected.  Got:\n%s\n\nExpected:\n%s\n", got, opmlOutput)
+	}
+
 	json, err := feed.ToJSON()
 	if err != nil {
 		t.Errorf("unexpected error encoding JSON: %v", err)
@@ -377,6 +410,23 @@ var rssOutputSorted = `<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" 
     </item>
   </channel>
 </rss>`
+
+var opmlOutputSorted = `<?xml version="1.0" encoding="UTF-8"?><opml version="2.0">
+  <head>
+    <title>jmoiron.net blog</title>
+    <dateCreated>16 Jan 13 21:52 EST</dateCreated>
+    <ownerName>Jason Moiron</ownerName>
+    <ownerEmail>jmoiron@jmoiron.net</ownerEmail>
+    <ownerId>jmoiron@jmoiron.net</ownerId>
+  </head>
+  <body>
+    <outline text="Limiting Concurrency in Go" type="link" created="18 Jan 13 21:52 EST" url="http://jmoiron.net/blog/limiting-concurrency-in-go/"></outline>
+    <outline text="Logic-less Template Redux" type="link" created="17 Jan 13 21:52 EST" url="http://jmoiron.net/blog/logicless-template-redux/"></outline>
+    <outline text="Idiomatic Code Reuse in Go" type="link" created="17 Jan 13 09:52 EST" url="http://jmoiron.net/blog/idiomatic-code-reuse-in-go/"></outline>
+    <outline text="Never Gonna Give You Up Mp3" type="link" created="17 Jan 13 07:52 EST" url="http://example.com/RickRoll.mp3"></outline>
+    <outline text="String formatting in Go" type="link" created="16 Jan 13 21:52 EST" url="http://example.com/strings"></outline>
+  </body>
+</opml>`
 
 var jsonOutputSorted = `{
   "version": "https://jsonfeed.org/version/1.1",
@@ -503,6 +553,22 @@ func TestFeedSorted(t *testing.T) {
 		t.Errorf("Rss not what was expected.  Got:\n%s\n\nExpected:\n%s\n", got, rssOutputSorted)
 	}
 
+	opml, err := feed.ToOpml()
+	if err != nil {
+		t.Errorf("unexpected error encoding OPML: %v", err)
+	}
+
+	if opml != opmlOutputSorted {
+		t.Errorf("Opml not what was expected.  Got:\n%s\n\nExpected:\n%s\n", opml, opmlOutputSorted)
+	}
+	buf.Reset()
+	if err := feed.WriteOpml(&buf); err != nil {
+		t.Errorf("unexpected error writing OPML: %v", err)
+	}
+	if got := buf.String(); got != opmlOutputSorted {
+		t.Errorf("Opml not what was expected.  Got:\n%s\n\nExpected:\n%s\n", got, opmlOutputSorted)
+	}
+
 	json, err := feed.ToJSON()
 	if err != nil {
 		t.Errorf("unexpected error encoding JSON: %v", err)
@@ -560,6 +626,14 @@ func TestFeedNil(t *testing.T) {
 	buf.Reset()
 	if err := feed.WriteRss(&buf); err != nil {
 		t.Errorf("unexpected error writing RSS: %v", err)
+	}
+
+	if _, err := feed.ToOpml(); err != nil {
+		t.Errorf("unexpected error encoding OPML: %v", err)
+	}
+	buf.Reset()
+	if err := feed.WriteOpml(&buf); err != nil {
+		t.Errorf("unexpected error writing OPML: %v", err)
 	}
 
 	if _, err := feed.ToJSON(); err != nil {
