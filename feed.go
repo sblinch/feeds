@@ -148,6 +148,18 @@ func (f *Feed) WriteJSON(w io.Writer) error {
 	return e.Encode(feed)
 }
 
+// ToHTML creates a HTML representation of this feed
+func (f *Feed) ToHTML() (string, error) {
+	h := &HTML{f}
+	return h.ToHTML()
+}
+
+// WriteHTML writes an HTML representation of this feed to the writer.
+func (f *Feed) WriteHTML(w io.Writer) error {
+	h := &HTML{f}
+	return h.WriteHTML(w)
+}
+
 // Sort sorts the Items in the feed with the given less function.
 func (f *Feed) Sort(less func(a, b *Item) bool) {
 	lessFunc := func(i, j int) bool {

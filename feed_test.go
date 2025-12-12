@@ -207,6 +207,102 @@ var jsonOutput = `{
   ]
 }`
 
+var htmlOutput = `<!doctype html>
+<html>
+<head>
+    <title>jmoiron.net blog</title>
+    <link rel="author" href="http://jmoiron.net/blog">
+    <meta name="author" value="Jason Moiron (jmoiron@jmoiron.net)">
+    <meta name="description" value="discussion about tech, footie, photos">
+</head>
+<body>
+    <h1>jmoiron.net blog</h1>
+    <ul>
+        <li>
+            <p>
+                <a href="http://jmoiron.net/blog/limiting-concurrency-in-go/">Limiting Concurrency in Go</a>
+                <br>
+                <small>Wed, 16 Jan 2013 21:52:35 EST</small>
+            </p>
+            <p>
+                <em>
+                    A discussion on controlled parallelism in golang
+                </em>
+            </p>
+            <p>Go's goroutines make it easy to make <a href="http://collectiveidea.com/blog/archives/2012/12/03/playing-with-go-embarrassingly-parallel-scripts/">embarrassingly parallel programs</a>, but in many &quot;real world&quot; cases resources can be limited and attempting to do everything at once can exhaust your access to them.</p>
+            <p>
+                <cite>
+                    <a href="jmoiron@jmoiron.net">Jason Moiron</a>
+                    <br>
+                </cite>
+            </p>
+        </li>
+        <li>
+            <p>
+                <a href="http://jmoiron.net/blog/logicless-template-redux/">Logic-less Template Redux</a>
+                <br>
+                <small>Wed, 16 Jan 2013 21:52:35 EST</small>
+            </p>
+            <p>
+                More thoughts on logicless templates
+            </p>
+        </li>
+        <li>
+            <p>
+                <a href="http://jmoiron.net/blog/idiomatic-code-reuse-in-go/">Idiomatic Code Reuse in Go</a>
+                <br>
+                <small>Wed, 16 Jan 2013 21:52:35 EST</small>
+            </p>
+            <p>
+                <img src="http://example.com/cover.jpg">
+            </p>
+            <p>
+                How to use interfaces <em>effectively</em>
+            </p>
+        </li>
+        <li>
+            <p>
+                <a href="http://example.com/RickRoll.mp3">Never Gonna Give You Up Mp3</a>
+                <br>
+                <small>Wed, 16 Jan 2013 21:52:35 EST</small>
+            </p>
+            <p>
+                <img src="http://example.com/RickRoll.mp3">
+            </p>
+            <p>
+                Never gonna give you up - Never gonna let you down.
+            </p>
+        </li>
+        <li>
+            <p>
+                <a href="http://example.com/strings">String formatting in Go</a>
+                <br>
+                <small>Wed, 16 Jan 2013 21:52:35 EST</small>
+            </p>
+            <p>
+                How to use things like %s, %v, %d, etc.
+            </p>
+        </li>
+        <li>
+            <p>
+                <a href="https://go-proverbs.github.io/">Go Proverb #1</a>
+                <br>
+                <small>Wed, 16 Jan 2013 21:52:35 EST</small>
+            </p>
+            <p>
+                Don't communicate by sharing memory, share memory by communicating.
+            </p>
+        </li>
+    </ul>
+    <p>
+        This work is copyright © Benjamin Button
+        <br>
+        <small>Wed, 16 Jan 2013 21:52:35 EST</small>
+    </p>
+</body>
+</html>
+`
+
 func TestFeed(t *testing.T) {
 	now, err := time.Parse(time.RFC3339, "2013-01-16T21:52:35-05:00")
 	if err != nil {
@@ -322,8 +418,23 @@ func TestFeed(t *testing.T) {
 	if err := feed.WriteJSON(&buf); err != nil {
 		t.Errorf("unexpected error writing JSON: %v", err)
 	}
-	if got := buf.String(); got != jsonOutput+"\n" { //json.Encode appends a newline after the JSON output: https://github.com/golang/go/commit/6f25f1d4c901417af1da65e41992d71c30f64f8f#diff-50848cbd686f250623a2ef6ddb07e157
+	if got := buf.String(); got != jsonOutput+"\n" { // json.Encode appends a newline after the JSON output: https://github.com/golang/go/commit/6f25f1d4c901417af1da65e41992d71c30f64f8f#diff-50848cbd686f250623a2ef6ddb07e157
 		t.Errorf("JSON not what was expected.  Got:\n||%s||\n\nExpected:\n||%s||\n", got, jsonOutput)
+	}
+
+	html, err := feed.ToHTML()
+	if err != nil {
+		t.Errorf("unexpected error encoding HTML: %v", err)
+	}
+	if html != htmlOutput {
+		t.Errorf("encoded HTML not what was expected.  Got:\n%s\n\nExpected:\n%s\n", html, htmlOutput)
+	}
+	buf.Reset()
+	if err := feed.WriteHTML(&buf); err != nil {
+		t.Errorf("unexpected error writing HTML: %v", err)
+	}
+	if got := buf.String(); got != htmlOutput {
+		t.Errorf("written HTML not what was expected.  Got:\n||%s||\n\nExpected:\n||%s||\n", got, htmlOutput)
 	}
 }
 
@@ -475,6 +586,62 @@ var jsonOutputSorted = `{
   ]
 }`
 
+var htmlOutputSorted = `<!doctype html>
+<html>
+<head>
+    <title>jmoiron.net blog</title>
+    <link rel="author" href="http://jmoiron.net/blog">
+    <meta name="author" value="Jason Moiron (jmoiron@jmoiron.net)">
+    <meta name="description" value="discussion about tech, footie, photos">
+</head>
+<body>
+    <h1>jmoiron.net blog</h1>
+    <ul>
+        <li>
+            <p>
+                <a href="http://jmoiron.net/blog/limiting-concurrency-in-go/">Limiting Concurrency in Go</a>
+                <br>
+                <small>Fri, 18 Jan 2013 21:52:35 EST</small>
+            </p>
+        </li>
+        <li>
+            <p>
+                <a href="http://jmoiron.net/blog/logicless-template-redux/">Logic-less Template Redux</a>
+                <br>
+                <small>Thu, 17 Jan 2013 21:52:35 EST</small>
+            </p>
+        </li>
+        <li>
+            <p>
+                <a href="http://jmoiron.net/blog/idiomatic-code-reuse-in-go/">Idiomatic Code Reuse in Go</a>
+                <br>
+                <small>Thu, 17 Jan 2013 09:52:35 EST</small>
+            </p>
+        </li>
+        <li>
+            <p>
+                <a href="http://example.com/RickRoll.mp3">Never Gonna Give You Up Mp3</a>
+                <br>
+                <small>Thu, 17 Jan 2013 07:52:35 EST</small>
+            </p>
+        </li>
+        <li>
+            <p>
+                <a href="http://example.com/strings">String formatting in Go</a>
+                <br>
+                <small>Wed, 16 Jan 2013 21:52:35 EST</small>
+            </p>
+        </li>
+    </ul>
+    <p>
+        This work is copyright © Benjamin Button
+        <br>
+        <small>Wed, 16 Jan 2013 21:52:35 EST</small>
+    </p>
+</body>
+</html>
+`
+
 func TestFeedSorted(t *testing.T) {
 	now, err := time.Parse(time.RFC3339, "2013-01-16T21:52:35-05:00")
 	if err != nil {
@@ -580,9 +747,25 @@ func TestFeedSorted(t *testing.T) {
 	if err := feed.WriteJSON(&buf); err != nil {
 		t.Errorf("unexpected error writing JSON: %v", err)
 	}
-	if got := buf.String(); got != jsonOutputSorted+"\n" { //json.Encode appends a newline after the JSON output: https://github.com/golang/go/commit/6f25f1d4c901417af1da65e41992d71c30f64f8f#diff-50848cbd686f250623a2ef6ddb07e157
+	if got := buf.String(); got != jsonOutputSorted+"\n" { // json.Encode appends a newline after the JSON output: https://github.com/golang/go/commit/6f25f1d4c901417af1da65e41992d71c30f64f8f#diff-50848cbd686f250623a2ef6ddb07e157
 		t.Errorf("JSON not what was expected.  Got:\n||%s||\n\nExpected:\n||%s||\n", got, jsonOutputSorted)
 	}
+
+	html, err := feed.ToHTML()
+	if err != nil {
+		t.Errorf("unexpected error encoding HTML: %v", err)
+	}
+	if html != htmlOutputSorted {
+		t.Errorf("HTML not what was expected.  Got:\n%s\n\nExpected:\n%s\n", html, htmlOutputSorted)
+	}
+	buf.Reset()
+	if err := feed.WriteHTML(&buf); err != nil {
+		t.Errorf("unexpected error writing HTML: %v", err)
+	}
+	if got := buf.String(); got != htmlOutputSorted {
+		t.Errorf("HTML not what was expected.  Got:\n||%s||\n\nExpected:\n||%s||\n", got, htmlOutputSorted)
+	}
+
 }
 
 func TestFeedNil(t *testing.T) {
